@@ -18,6 +18,72 @@
     box-sizing: border-box;
 }
 
+/* Preloader */
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.loader-content {
+    text-align: center;
+}
+
+.loader-logo {
+    font-family: var(--font-serif);
+    font-size: 2.5rem;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards;
+}
+
+.loader-logo span {
+    color: var(--accent-pink);
+}
+
+.loader-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(212, 136, 149, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--accent-pink);
+    margin: 0 auto;
+    animation: spin 1s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.preloader-hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
 body {
     font-family: var(--font-sans);
     color: var(--text-dark);
@@ -530,6 +596,32 @@ img {
     }
 }
 
+/* Map Section */
+/* Map Section */
+.map-container {
+    width: 90%;
+    max-width: 800px;
+    margin: 40px auto 0;
+    padding: 15px;
+    /* Frame Border */
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.map-container:hover {
+    transform: translateY(-5px);
+}
+
+.map-container iframe {
+    display: block;
+    width: 100%;
+    height: 400px;
+    /* Fixed nice height */
+    border-radius: 15px;
+}
+
 /* Testimonials */
 .testimonials-grid {
     display: grid;
@@ -625,8 +717,104 @@ img {
     color: #777;
 }
 
+/* --- ANIMATIONS & TRANSITIONS --- */
 
-/* Mobile Menu */
+/* Scroll Reveal Base State */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Staggered delays for grid items (up to 4 items) */
+.reveal.active:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+.reveal.active:nth-child(2) {
+    transition-delay: 0.2s;
+}
+
+.reveal.active:nth-child(3) {
+    transition-delay: 0.3s;
+}
+
+.reveal.active:nth-child(4) {
+    transition-delay: 0.4s;
+}
+
+/* Hero Section Animations (Load on start) */
+.hero h1 {
+    opacity: 0;
+    animation: fadeInUp 1s ease forwards 2.8s;
+    /* Start after preloader */
+}
+
+.hero .subtitle {
+    opacity: 0;
+    animation: fadeInUp 1s ease forwards 3s;
+}
+
+.hero .btn-hero {
+    opacity: 0;
+    animation: fadeInUp 1s ease forwards 3.2s;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Enhanced Hover Effects */
+.feature-card,
+.service-card,
+.review-card,
+.map-container {
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+}
+
+.feature-card:hover,
+.service-card:hover,
+.review-card:hover,
+.map-container:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.btn-hero,
+.btn-nav,
+.btn-book {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-hero:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(212, 136, 149, 0.4);
+}
+
+/* Smooth Image Hover */
+.gallery-item img {
+    transition: transform 0.6s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
 .mobile-menu {
     position: fixed;
     top: 0;

@@ -1,4 +1,16 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // Preloader - 2.5 seconds delay
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+        setTimeout(() => {
+            preloader.classList.add('preloader-hidden');
+            // Optional: Remove from DOM after transition to free up memory
+            setTimeout(() => {
+                preloader.style.display = 'none';
+            }, 500);
+        }, 2500); // 2.5 seconds
+    }
+
     const mobileToggle = document.getElementById('mobile-toggle');
     const mobileMenu = document.getElementById('mobile-menu');
     const closeMenu = document.getElementById('close-menu');
@@ -29,6 +41,28 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             navbar.classList.remove('scrolled');
         }
+    });
+
+    // Scroll Animations (Intersection Observer)
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px"
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target); // Only animate once
+            }
+        });
+    }, observerOptions);
+
+    const animatedElements = document.querySelectorAll('.section-title, .about-content, .feature-card, .service-card, .gallery-wrapper, .review-card, .map-container');
+
+    animatedElements.forEach(el => {
+        el.classList.add('reveal');
+        observer.observe(el);
     });
 
     // Dynamic Gallery Logic
