@@ -31,46 +31,104 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Gallery Slider Logic
-    const thumbs = document.querySelectorAll('.thumb');
-    const mainImage = document.getElementById('current-image');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
-    let currentIndex = 0;
+    // Dynamic Gallery Logic
+    const galleryRoot = document.getElementById('dynamic-gallery-root');
+    const galleryPath = 'gallery/';
 
-    // Function to change image
-    window.changeImage = function (element) {
-        // Update main image
-        mainImage.style.opacity = '0'; // Fade out effect
-        setTimeout(() => {
-            mainImage.src = element.src;
-            mainImage.style.opacity = '1';
-        }, 300);
+    if (galleryRoot) {
+        fetch(galleryPath + 'manifest.json')
+            .then(response => {
+                if (!response.ok) throw new Error("Manifest not found");
+                return response.json();
+            })
+            .then(images => {
+                if (!images || images.length === 0) {
+                    galleryRoot.innerHTML = '<p class="text-center">No images found.</p>';
+                    return;
+                }
 
-        // Update active class
-        thumbs.forEach(thumb => thumb.classList.remove('active'));
-        element.classList.add('active');
+                // Build HTML Structure
+                let mainImageSrc = galleryPath + images[0];
 
-        // Update current index
-        currentIndex = Array.from(thumbs).indexOf(element);
+                let thumbsHtml = images.map((img, index) => {
+                    return `<img src="${galleryPath + img}" class="thumb ${index === 0 ? 'active' : ''}" data-index="${index}" onclick="changeImage(this)">`;
+                }).join('');
 
-        // Auto scroll thumbnail into view
-        element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    };
+                const galleryHtml = `
+                    <div class="gallery-container">
+                        <button class="gallery-btn prev" id="prev-btn">&#10094;</button>
+                        <div class="gallery-main">
+                            <img src="${mainImageSrc}" alt="Gallery Image" id="current-image">
+                        </div>
+                        <button class="gallery-btn next" id="next-btn">&#10095;</button>
+                    </div>
+                    <div class="gallery-thumbs" id="gallery-thumbs">
+                        ${thumbsHtml}
+                    </div>
+                    <div class="text-center" style="margin-top: 10px; font-size: 0.9em; color: #888;">
+                        <span id="gallery-counter">1 / ${images.length}</span>
+                    </div>
+                `;
 
-    // Next Button
-    if (nextBtn) {
-        nextBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % thumbs.length;
-            changeImage(thumbs[currentIndex]);
-        });
+                galleryRoot.innerHTML = galleryHtml;
+
+                // Re-attach Event Listeners
+                attachGalleryListeners(images);
+            })
+            .catch(err => {
+                console.error('Error loading gallery:', err);
+                galleryRoot.innerHTML = '<p class="text-center">Gallery could not be loaded. Please try again later.</p>';
+            });
     }
 
-    // Prev Button
-    if (prevBtn) {
-        prevBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex - 1 + thumbs.length) % thumbs.length;
-            changeImage(thumbs[currentIndex]);
-        });
+    function attachGalleryListeners(images) {
+        const mainImage = document.getElementById('current-image');
+        const thumbs = document.querySelectorAll('.thumb');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('gallery-counter');
+        let currentIndex = 0;
+
+        // Function globally available or scoped here (we attach to window if needed for inline onclick, 
+        // but we used inline onclick="changeImage(this)" so we must expose it)
+
+        window.changeImage = function (element) {
+            const newIndex = parseInt(element.getAttribute('data-index'));
+            currentIndex = newIndex;
+            updateGalleryDisplay();
+        };
+
+        function updateGalleryDisplay() {
+            // Update Main Image
+            mainImage.style.opacity = '0';
+            setTimeout(() => {
+                mainImage.src = galleryPath + images[currentIndex];
+                mainImage.style.opacity = '1';
+            }, 200);
+
+            // Update Thumbs
+            thumbs.forEach(t => t.classList.remove('active'));
+            thumbs[currentIndex].classList.add('active');
+
+            // Scroll Thumb into view
+            thumbs[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+            // Update Counter
+            if (counter) counter.innerText = `${currentIndex + 1} / ${images.length}`;
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % images.length;
+                updateGalleryDisplay();
+            });
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+                updateGalleryDisplay();
+            });
+        }
     }
 });

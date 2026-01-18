@@ -378,13 +378,36 @@ img {
 .service-item p {
     font-size: 0.85rem;
     color: #888;
+    margin-bottom: 10px;
+    /* Add space for button */
 }
 
-/* Portfolio Gallery */
-/* Slider Gallery */
+.btn-book {
+    display: inline-block;
+    padding: 5px 15px;
+    background-color: #25D366;
+    /* WhatsApp Green */
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 20px;
+    text-transform: uppercase;
+    transition: background 0.3s;
+}
+
+.btn-book:hover {
+    background-color: #128C7E;
+}
+
+.btn-book i {
+    margin-right: 5px;
+}
+
+/* Portfolio Gallery (Dynamic Slider) */
 .gallery-wrapper {
     max-width: 1000px;
     margin: 0 auto;
+    position: relative;
 }
 
 .gallery-container {
@@ -393,20 +416,28 @@ img {
     margin-bottom: 20px;
     border-radius: 15px;
     overflow: hidden;
+    background: #fafafa;
+    /* Light background for non-square images */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .gallery-main {
     width: 100%;
-    height: 500px;
-    /* Fixed height for consistency */
+    height: 600px;
+    /* Increased height for better visibility */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .gallery-main img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: opacity 0.4s ease-in-out;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    /* CRITICAL: Shows full image without cropping */
+    transition: opacity 0.3s ease;
 }
 
 /* Navigation Buttons */
@@ -414,7 +445,7 @@ img {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.7);
     border: none;
     color: var(--text-dark);
     font-size: 2rem;
@@ -442,9 +473,10 @@ img {
 .gallery-thumbs {
     display: flex;
     overflow-x: auto;
-    gap: 15px;
+    gap: 10px;
     padding: 10px 5px;
     scrollbar-width: thin;
+    scroll-behavior: smooth;
 }
 
 .gallery-thumbs::-webkit-scrollbar {
@@ -460,11 +492,13 @@ img {
     width: 100px;
     height: 80px;
     object-fit: cover;
+    /* Thumbnails can be cropped for uniformity */
     cursor: pointer;
     border-radius: 8px;
     opacity: 0.6;
     transition: all 0.3s ease;
     flex-shrink: 0;
+    border: 2px solid transparent;
 }
 
 .thumb:hover {
@@ -473,19 +507,21 @@ img {
 
 .thumb.active {
     opacity: 1;
-    border: 3px solid var(--accent-pink);
+    border-color: var(--accent-pink);
     transform: scale(1.05);
 }
 
-/* Mobile Tweaks */
-@media (max-width: 600px) {
-    .gallery-main {
-        height: 300px;
-    }
+.loading-spinner {
+    padding: 50px;
+    text-align: center;
+    color: var(--text-light);
+    font-style: italic;
+}
 
-    .gallery-btn {
-        padding: 5px 12px;
-        font-size: 1.5rem;
+/* Responsive */
+@media (max-width: 768px) {
+    .gallery-main {
+        height: 400px;
     }
 
     .thumb {
